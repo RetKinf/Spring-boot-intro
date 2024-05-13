@@ -1,7 +1,7 @@
 package com.example.repository;
 
 import com.example.model.Book;
-import java.util.Optional;
+import java.util.List;
 
 public class BookRepositoryImpl implements BookRepository {
     @Override
@@ -10,7 +10,7 @@ public class BookRepositoryImpl implements BookRepository {
     }
 
     @Override
-    public Optional<Book> findAll() {
-        return Optional.empty();
+    public List<Book> findAll() {
+        return List.of();
     }
 }
