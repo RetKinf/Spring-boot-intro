@@ -1,9 +1,6 @@
 package com.example.service;
 
-import com.example.dto.BookDto;
-import com.example.dto.CreateBookRequestDto;
-import com.example.exception.EntityNotFoundException;
-import com.example.mapper.BookMapper;
+import com.example.model.Book;
 import com.example.repository.BookRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,29 +10,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
-    private final BookMapper bookMapper;
 
     @Override
-    public BookDto save(CreateBookRequestDto requestDto) {
-        return bookMapper.toDto(
-                bookRepository.save(bookMapper.toModel(requestDto))
-        );
+    public Book save(Book book) {
+        return book;
     }
 
     @Override
-    public List<BookDto> findAll() {
-        return bookRepository.findAll()
-                .stream()
-                .map(bookMapper::toDto)
-                .toList();
+    public List<Book> findAll() {
+        return List.copyOf(bookRepository.findAll());
     }
 
     @Override
-    public BookDto findById(Long id) {
-        return bookMapper.toDto(bookRepository
-                .findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException("Not found book with id " + id)
-        ));
+    public Book findById(Long id) {
+        return null;
     }
 }
