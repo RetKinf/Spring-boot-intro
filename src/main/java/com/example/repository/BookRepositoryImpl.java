@@ -1,6 +1,8 @@
 package com.example.repository;
 
+import com.example.exception.DataProcessingException;
 import com.example.model.Book;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import java.util.List;
@@ -17,16 +19,31 @@ public class BookRepositoryImpl implements BookRepository {
 
     @Override
     public Book save(Book book) {
-        return null;
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            transaction = entityManager.getTransaction();
+            transaction.begin();
+            entityManager.persist(book);
+            transaction.commit();
+            return book;
+        } catch (Exception e) {
+            if (transaction.isActive() && transaction != null) {
+                transaction.rollback();
+            }
+            throw new DataProcessingException("Could not save book", e);
+        }
     }
 
     @Override
     public List<Book> findAll() {
-        return List.of();
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(QUERY_ALL_BOOKS, Book.class).getResultList();
+        }
     }
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.empty();
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return Optional.ofNullable(entityManager.find(Book.class, id));
+        }
     }
 }
