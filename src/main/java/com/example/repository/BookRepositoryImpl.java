@@ -20,6 +20,7 @@ public class BookRepositoryImpl implements BookRepository {
     @Override
     public Book save(Book book) {
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            transaction = entityManager.getTransaction();
             transaction.begin();
             entityManager.persist(book);
             transaction.commit();
