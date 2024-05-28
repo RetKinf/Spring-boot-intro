@@ -2,7 +2,6 @@ package com.example.controller;
 
 import com.example.dto.BookDto;
 import com.example.dto.CreateBookRequestDto;
-import com.example.repository.BookRepository;
 import com.example.service.BookService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/books")
 public class BookController {
     private final BookService bookService;
-    private final BookRepository bookRepository;
 
     @GetMapping
     @Operation(summary = "Get all products", description = "Get a list of all available books")
@@ -58,6 +56,6 @@ public class BookController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete book by id", description = "Delete book by id")
     public void deleteBook(@PathVariable Long id) {
-        bookRepository.deleteById(id);
+        bookService.delete(id);
     }
 }
