@@ -57,7 +57,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(RegistrationException.class)
     public ResponseEntity<String> handleRegistrationException(RegistrationException ex) {
         return new ResponseEntity<>(
-                "Can't register", HttpStatus.BAD_REQUEST
+                "Can't register", HttpStatus.CONFLICT
         );
     }
 }

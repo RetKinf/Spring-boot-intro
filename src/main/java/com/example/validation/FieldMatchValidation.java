@@ -2,7 +2,8 @@ package com.example.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.apache.commons.beanutils.BeanUtils;
+import java.util.Objects;
+import org.springframework.beans.BeanWrapperImpl;
 
 public class FieldMatchValidation implements ConstraintValidator<FieldMatch, Object> {
     private String firstFieldName;
@@ -16,15 +17,8 @@ public class FieldMatchValidation implements ConstraintValidator<FieldMatch, Obj
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext constraintValidatorContext) {
-        try {
-            final Object firstObj = BeanUtils.getProperty(value, firstFieldName);
-            final Object secondObj = BeanUtils.getProperty(value, secondFieldName);
-
-            return firstObj == null && secondObj == null
-                    || firstObj != null
-                    && firstObj.equals(secondObj);
-        } catch (Exception e) {
-            return false;
-        }
+        Object field = new BeanWrapperImpl(value).getPropertyValue(this.firstFieldName);
+        Object fieldMatch = new BeanWrapperImpl(value).getPropertyValue(this.secondFieldName);
+        return Objects.equals(field, fieldMatch);
     }
 }
