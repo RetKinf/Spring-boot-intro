@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: student
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$r5Ih0Fdb/DATMcG41JKdiuBsrhslSH4qZ9wuDcj9qRpZwtUzDHLOa"
+              - column:
+                  name: first_name
+                  value: "Vladlen"
+              - column:
+                  name: last_name
+                  value: "Soloviov"
