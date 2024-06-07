@@ -4,10 +4,12 @@ import com.example.dto.user.UserRegistrationRequestDto;
 import com.example.dto.user.UserResponseDto;
 import com.example.exception.RegistrationException;
 import com.example.mapper.UserMapper;
+import com.example.model.Role;
 import com.example.model.RoleName;
 import com.example.model.User;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = userMapper.toModel(requestDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.getRoles().add(roleRepository.findByRole(RoleName.USER));
+        Role role = roleRepository.findByRole(RoleName.USER);
+        user.setRoles(Set.of(role));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
