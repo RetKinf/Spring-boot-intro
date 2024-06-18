@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-users
+      author: student
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: email
+                  value: "admin@example.com"
+              - column:
+                  name: password
+                  value: "$2a$10$SUf2XulU8.6wevaF2k89JO/0N6pOLKj.OK6qr3alGan/MU3OcEcEG"  # securePassword123
+              - column:
+                  name: first_name
+                  value: "Vladlen"
+              - column:
+                  name: last_name
+                  value: "Soloviov"
