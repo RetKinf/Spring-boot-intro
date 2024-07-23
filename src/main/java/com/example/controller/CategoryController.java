@@ -49,6 +49,16 @@ public class CategoryController {
         return categoryService.findById(id);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("/{id}")
+    @Operation(
+            summary = "Get category by ID",
+            description = "Get category by ID"
+    )
+    public CategoryDto getCategoryById(@PathVariable Long id) {
+        return categoryService.getById(id);
+    }
+
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
