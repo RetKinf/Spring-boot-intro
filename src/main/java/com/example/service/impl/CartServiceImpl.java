@@ -5,10 +5,10 @@ import com.example.dto.cart.ShoppingCartDto;
 import com.example.exception.EntityNotFoundException;
 import com.example.mapper.BookMapper;
 import com.example.mapper.CartMapper;
-import com.example.model.Book;
 import com.example.model.CartItem;
 import com.example.model.ShoppingCart;
 import com.example.model.User;
+import com.example.repository.BookRepository;
 import com.example.repository.CartItemRepository;
 import com.example.repository.ShoppingCartRepository;
 import com.example.repository.UserRepository;
@@ -27,6 +27,7 @@ public class CartServiceImpl implements CartService {
     private final CartMapper cartMapper;
     private final UserRepository userRepository;
     private final BookMapper bookMapper;
+    private final BookRepository bookRepository;
 
     @Override
     public ShoppingCartDto getCart() {
@@ -38,23 +39,28 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public ShoppingCartDto save(CartItemRequestDto cartItemDto) {
-        Book book = bookMapper.bookFromId(cartItemDto.getBookId());
+        Long bookId = cartItemDto.getBookId();
+        isExistingBook(bookId);
         ShoppingCart shoppingCart = getCartForCurrentUser();
         shoppingCart.getCartItems()
                 .stream()
-                .filter(cartItem -> cartItem.getBook().getId().equals(book.getId()))
+                .filter(cartItem -> cartItem.getBook().getId().equals(bookId))
                 .findFirst()
                 .ifPresentOrElse(item -> item.setQuantity(
                         item.getQuantity() + cartItemDto.getQuantity()),
-                        () -> cartItemRepository.save(cartMapper.toModel(cartItemDto))
+                        () -> {
+                            CartItem model = cartMapper.toModel(cartItemDto);
+                            model.setShoppingCart(shoppingCart);
+                        }
                 );
-        return cartMapper.toDto(getCartForCurrentUser());
+        shoppingCartRepository.save(shoppingCart);
+        return cartMapper.toDto(shoppingCart);
     }
 
     @Transactional
     @Override
     public ShoppingCartDto update(CartItemRequestDto cartItemDto, Long cartItemId) {
-        bookMapper.bookFromId(cartItemDto.getBookId());
+        isExistingBook(cartItemDto.getBookId());
         if (!cartItemRepository.existsById(cartItemId)) {
             throw new EntityNotFoundException("Cart item with ID " + cartItemId + " not found");
         }
@@ -84,5 +90,11 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart not found by user ID " + currentUserId
                 ));
+    }
+
+    private void isExistingBook(Long bookId) {
+        if (!bookRepository.existsById(bookId)) {
+            throw new EntityNotFoundException("Book with ID " + bookId + " not found");
+        }
     }
 }

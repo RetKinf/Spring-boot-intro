@@ -34,9 +34,4 @@ public interface BookMapper {
             bookDto.setCategoryIds(categoryIds);
         }
     }
-
-    @Named("bookFromId")
-    default Book bookFromId(Long id) {
-        return null;
-    }
 }
