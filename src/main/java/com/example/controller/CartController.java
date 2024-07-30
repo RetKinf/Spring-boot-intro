@@ -37,19 +37,19 @@ public class CartController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Add a book to cart", description = "Add a book to cart")
-    public void addItem(@RequestBody @Valid CartItemRequestDto itemCartDto) {
-        cartService.save(itemCartDto);
+    public ShoppingCartDto addItem(@RequestBody @Valid CartItemRequestDto itemCartDto) {
+        return cartService.save(itemCartDto);
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/items/{cartItemId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Update quantity", description = "Update quantity")
-    public void updateItem(
+    public ShoppingCartDto updateItem(
             @PathVariable Long cartItemId,
             @RequestBody @Valid CartItemRequestDto cartItemDto
     ) {
-        cartService.update(cartItemDto, cartItemId);
+        return cartService.update(cartItemDto, cartItemId);
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
