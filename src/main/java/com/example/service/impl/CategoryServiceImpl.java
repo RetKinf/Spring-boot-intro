@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.impl;
 
 import com.example.dto.book.BookDtoWithoutCategoryIds;
 import com.example.dto.category.CategoryDto;
@@ -9,6 +9,7 @@ import com.example.mapper.CategoryMapper;
 import com.example.model.Category;
 import com.example.repository.BookRepository;
 import com.example.repository.CategoryRepository;
+import com.example.service.CategoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

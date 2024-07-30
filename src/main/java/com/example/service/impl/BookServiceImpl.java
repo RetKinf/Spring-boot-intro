@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.impl;
 
 import com.example.dto.book.BookDto;
 import com.example.dto.book.CreateBookRequestDto;
@@ -6,6 +6,7 @@ import com.example.exception.EntityNotFoundException;
 import com.example.mapper.BookMapper;
 import com.example.model.Book;
 import com.example.repository.BookRepository;
+import com.example.service.BookService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;

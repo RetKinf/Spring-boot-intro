@@ -1,4 +1,4 @@
-package com.example.service;
+package com.example.service.impl;
 
 import com.example.dto.user.UserRegistrationRequestDto;
 import com.example.dto.user.UserResponseDto;
@@ -6,9 +6,12 @@ import com.example.exception.RegistrationException;
 import com.example.mapper.UserMapper;
 import com.example.model.Role;
 import com.example.model.RoleName;
+import com.example.model.ShoppingCart;
 import com.example.model.User;
 import com.example.repository.RoleRepository;
+import com.example.repository.ShoppingCartRepository;
 import com.example.repository.UserRepository;
+import com.example.service.UserService;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
@@ -35,6 +39,9 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByRole(RoleName.USER);
         user.setRoles(Set.of(role));
         userRepository.save(user);
+        ShoppingCart shoppingCart = new ShoppingCart();
+        shoppingCart.setUser(user);
+        shoppingCartRepository.save(shoppingCart);
         return userMapper.toUserResponse(user);
     }
 }
