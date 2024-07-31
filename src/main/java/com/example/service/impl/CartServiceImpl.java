@@ -4,7 +4,6 @@ import com.example.dto.cart.CartItemRequestDto;
 import com.example.dto.cart.ShoppingCartDto;
 import com.example.exception.EntityNotFoundException;
 import com.example.mapper.CartMapper;
-import com.example.model.Book;
 import com.example.model.CartItem;
 import com.example.model.ShoppingCart;
 import com.example.model.User;
@@ -38,21 +37,17 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public ShoppingCartDto save(CartItemRequestDto cartItemDto) {
-        Long bookId = cartItemDto.getBookId();
-        Book book = bookRepository.findById(bookId).orElseThrow(
-                () -> new EntityNotFoundException("Book not found with id " + bookId)
-        );
+        isExistingBook(cartItemDto);
         ShoppingCart cartForCurrentUser = getCartForCurrentUser();
-        cartForCurrentUser.getCartItems().stream()
-                .filter(item -> item.getBook().getId().equals(bookId))
+        cartForCurrentUser.getCartItems()
+                .stream()
+                .filter(item -> item.getBook().getId().equals(cartItemDto.getBookId()))
                 .findFirst()
-                .ifPresentOrElse(item -> item.setQuantity(item.getQuantity()
-                                + cartItemDto.getQuantity()),
+                .ifPresentOrElse(item -> item.setQuantity(item.getQuantity() + cartItemDto.getQuantity()),
                         () -> {
-                            CartItem newCartItem = cartMapper.toModel(cartItemDto);
-                            newCartItem.setBook(book);
-                            newCartItem.setShoppingCart(cartForCurrentUser);
-                            cartForCurrentUser.addItem(newCartItem);
+                            CartItem model = cartMapper.toModel(cartItemDto);
+                            model.setShoppingCart(cartForCurrentUser);
+                            cartForCurrentUser.addItem(model);
                         });
         shoppingCartRepository.save(cartForCurrentUser);
         return cartMapper.toDto(cartForCurrentUser);
@@ -61,6 +56,7 @@ public class CartServiceImpl implements CartService {
     @Transactional
     @Override
     public ShoppingCartDto update(CartItemRequestDto cartItemDto, Long cartItemId) {
+        isExistingBook(cartItemDto);
         if (!cartItemRepository.existsById(cartItemId)) {
             throw new EntityNotFoundException("Cart item with ID " + cartItemId + " not found");
         }
@@ -90,5 +86,11 @@ public class CartServiceImpl implements CartService {
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Cart not found by user ID " + currentUserId
                 ));
+    }
+
+    private void isExistingBook(CartItemRequestDto cartItemDto) {
+        if (!bookRepository.existsById(cartItemDto.getBookId())) {
+            throw new EntityNotFoundException("Book not found with id " + cartItemDto.getBookId());
+        }
     }
 }
