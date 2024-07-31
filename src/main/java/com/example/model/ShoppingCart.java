@@ -32,4 +32,9 @@ public class ShoppingCart {
     private Set<CartItem> cartItems = new HashSet<>();
     @Column(nullable = false)
     private boolean isDeleted;
+
+    public void addItem(CartItem cartItem) {
+        cartItem.setShoppingCart(this);
+        cartItems.add(cartItem);
+    }
 }
